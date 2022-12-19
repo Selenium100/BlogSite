@@ -3,7 +3,14 @@
 
     "MAIL_USERNAME" : "nityaranjan190592@gmail.com",
     "MAIL_PASSWORD" : "dojbienqubwhzgcl",
-    "no_of_posts": 3
+    "no_of_posts": 3,
+    "twitter_link": "https://www.twitter.com",
+    "facebook_link": "https://www.facebook.com",
+    "github_link": "https://github.com/Selenium100/BlogSite",
+    "blog_name": "Coding Ninja",
+    "login_img": "image1.gif",
+    "admin_user": "nitya@admin.com",
+    "admin_password": "Selenium@123"
 
   }
 }

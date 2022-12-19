@@ -1,4 +1,6 @@
-from flask import Flask, render_template, request
+from datetime import datetime
+
+from flask import Flask, render_template, request, session,redirect
 from flask_sqlalchemy import SQLAlchemy
 from flask_mail import Mail
 import requests
@@ -9,6 +11,7 @@ with open("config.json", "r") as c:
 
 db = SQLAlchemy()
 app = Flask(__name__)
+app.config['SECRET_KEY'] = "Your_secret_string"
 app.config.update(
     MAIL_SERVER='smtp.gmail.com',
     MAIL_PORT='465',
@@ -85,6 +88,62 @@ def contact():
 def post(post_slug):
     post = Posts.query.filter_by(slug = post_slug).first()
     return render_template("post.html" ,params =params, post=post)
+
+
+@app.route('/login' , methods=['GET','POST'])
+def login():
+
+    if ('user' in session and session["user"] == params['admin_user']):
+        posts = Posts.query.all()
+        return render_template("dashboard.html" , params =params, posts=posts)
+
+
+    if request.method == "POST":
+        username = request.form.get('uname');
+        password = request.form.get('pass');
+
+        if (username == params['admin_user'] and password == params['admin_password']):
+            session["user"] = username
+            posts = Posts.query.all()
+            return render_template("dashboard.html" , params=params, posts=posts)
+
+
+
+    return render_template("login.html", params=params)
+
+
+@app.route('/edit/<string:sno>' , methods=['GET','POST'])
+def edit(sno):
+    if ('user' in session and session['user'] == params['admin_user']):
+        if (request.method =='POST'):
+            name = request.form.get('name')
+            title = request.form.get('title')
+            content = request.form.get('content')
+            slug = request.form.get('slug')
+            date = datetime.now()
+
+            if sno == "0":
+                post = Posts(name=name,title=title,content=content,slug=slug,date=date)
+                db.session.add(post)
+                db.session.commit()
+            else:
+                post = Posts.query.filter_by(sno=sno).first()
+                post.name=name
+                post.title=title
+                post.content=content
+                post.slug=slug
+                post.date=date
+                db.session.commit()
+                return redirect("/edit/"+sno)
+        post = Posts.query.filter_by(sno=sno).first()
+        return render_template('edit.html',sno=sno,params=params,post=post)
+
+
+
+
+
+
+
 
 
 app.run(debug=True)
