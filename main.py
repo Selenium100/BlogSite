@@ -134,7 +134,8 @@ def edit(sno):
                 post.slug=slug
                 post.date=date
                 db.session.commit()
-                return redirect("/edit/"+sno)
+                #return redirect("/edit/"+sno)
+                return redirect("/login")
         post = Posts.query.filter_by(sno=sno).first()
         return render_template('edit.html',sno=sno,params=params,post=post)
 
